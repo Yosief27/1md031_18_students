@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/vue/vue.js" defer></script>
+  <script src="/socket.io/socket.io.js" defer></script>
+  <script src="js/chat.js" defer></script>
+  <script src="https://vuejs.org/js/vue.js"></script>
+
+    <title>Document</title>
+</head>
+<body>
+    <main id='chat'>
+        <h1>hello josi</h1>
+        <div v-for='message in messages'>
+            {{message.message}}
+        </div>
+
+            <input type='text' v-model='newMessage' on-v:keyup.enter='addMessage'>
+    
+    </main>
+    
+</body>
+</html>

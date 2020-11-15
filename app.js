@@ -25,6 +25,10 @@ app.get('/', function (req, res) {
 app.get('/map', function (req, res) {
   res.sendFile(path.join(__dirname, 'views/map.html'));
 });
+// Serve chat.html as /chat
+app.get('/chat', function (req, res) {
+  res.sendFile(path.join(__dirname, 'views/chat.html'));
+});
 // Serve dispatcher.html as /dispatcher
 app.get('/dispatcher', function (req, res) {
   res.sendFile(path.join(__dirname, 'views/dispatcher.html'));
@@ -34,6 +38,7 @@ app.get('/dispatcher', function (req, res) {
 // prepare for multiple instances of data if necessary
 function Data() {
   this.orders = {};
+  this.messages=[];
 }
 
 /*
@@ -43,17 +48,37 @@ Data.prototype.addOrder = function (order) {
   //Store the order in an "associative array" with orderId as key
   this.orders[order.orderId] = order;
 };
-
 Data.prototype.getAllOrders = function () {
   return this.orders;
 };
+//adding and returning messages
+
+Data.prototype.addMessage = function (message) {
+  
+  this.messages.push(message);
+};
+Data.prototype.getAllMessages = function () {
+      return this.messages;
+    };
+
+
 
 var data = new Data();
 
-io.on('connection', function (socket) {
+io.on('connection', function(socket) {
   // Send list of orders when a client connects
   socket.emit('initialize', { orders: data.getAllOrders() });
 
+  //related to chat
+  // Send list of messages when a client connects
+  socket.emit('chat-AllPervious', { messages: data.getAllMessages() });
+
+  // When a connected client emits an "addMessage" message
+  socket.on('chat-addMessage', function (message) {
+    data.addMessage(message);
+    // send updated info to all connected clients, note the use of io instead of socket
+    io.emit('chat-AllPervious', { messages: data.getAllMessages() });
+  });
   // When a connected client emits an "addOrder" message
   socket.on('addOrder', function (order) {
     data.addOrder(order);
