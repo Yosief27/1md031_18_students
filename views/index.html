@@ -4,37 +4,33 @@
     <head>
        
         <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="../css/reset.css">
         <link rel="stylesheet" type="text/css" href="../css/style.css">
         <link rel="stylesheet" type="text/css" href="../css/deli-very.css">
-
+        <script type="text/javascript" src="../js/menu.js" defer></script>
         <script src="/vue/vue.js" defer></script>
         <script src="/socket.io/socket.io.js" defer></script>
-        <script src="js/deli-very.js" defer></script>
-
-       
-        <script src="https://vuejs.org/js/vue.js"></script>
-        <script type="text/javascript" src="../js/menu.js" defer></script>
-        <script src="../js/js_script.js" defer></script>
-       
         
+        <!-- <script src="../js/deli-very.js" defer></script> -->
+        <script src="../js/js_script.js" defer></script>
+        
+       
+       
         <title>Burger Heaven Online</title>
     </head>
     <body>
         <header>
-            <section id="header_section">
-               
+            <section id="header_section">               
             <img  src="../img/background_header.jpg" >
-            <h1>Welcome to BurgerHeaven Online</h1>
-            
+            <h1>Welcome to BurgerHeaven Online</h1>            
             </section>
-            
-            
+                        
         </header>
         <main class="main-ID" >
             <section id="select_burger">
-                <h2>Select Burger</h2>
-                <p>This is where you execute your burger.</p>
+                <h1>Please select your Burger</h1>
+              
                 <section class="burger_wrapper" >
                     <template v-for="burger in food" >
                         <div class="burger a"><h3 style='text-transform:uppercase'> {{burger.name}}</h3></div>
@@ -61,7 +57,7 @@
                         <div class="burger a3">
                             <input type="checkbox"  
                             v-bind:value=burger.name
-                           v-model="form.burgername"
+                           v-model="orders.burgername"
                             >
                             <label for="burgerchoiceName">Add to the order</label>
                         </div>
@@ -76,34 +72,34 @@
                     
             
             <section id="customer_id" >
-                <h2>Customer Information</h2>
-                <p>This is where you provide necessary information</p>
-                <h3>Delivery information</h3>
+                <h1>Customer Information</h1>
+                
+               
+                <br>
 
                 <form id='form_class' >
                   
                     <label for="fullname">Full name</label><br>
-                    <input type="text" id="fullname" name="nm" required="required" placeholder="type full name" v-model="form.name">
+                    <input type="text" id="fullname" name="nm" required="required" placeholder="type full name" v-model="orders.name">
                     <p><label for="email">E-mail</label><br>
-                    <input type="text" id="email" name="em" required="required" placeholder="type email" v-model="form.email"></p><br>
-                    <!-- <p><label for="streetname">Street</label><br>
-                    <input type="text" id="streetname" name="stnm" required="required" placeholder="type street name" v-model="form.streetname"></p>
-                    <p><label for="house">House</label><br>
-                    <input type="text" id="house" name="housenumber" required="required" placeholder="type house number" v-model="form.husnum"></p> -->
-                    <h1> Click in the map! </h1>
-                    <a href="/dispatcher" target="_blank">Open dispatcher in new window</a>.
+                    <input type="text" id="email" name="em" required="required" placeholder="type email" v-model="orders.email"></p><br>
+                
+                    <h3>Delivery information</h3>   
+                    <br>            
+                    <h1> Please indicate a place  of  delivery! </h1>
+                  
                     <div class="view-box">
-                      <div id="dots" v-on:click="addOrder">
-                          <div 
-                            v-for="(order, key) in orders"
-                            v-bind:style="{ left: order.details.x + 'px', top: order.details.y + 'px'}">
-                            T
-                          </div>
-                      </div>
+                        <div id='dots' v-on:click="displayOrder">
+                            <div 
+                            
+                            v-bind:style="{ left: orders.details.x + 'px', top: orders.details.y + 'px'}">
+                           T
+                            </div>
+                        </div>
                     </div>
                     <br>
                     <p><label for="paytype">Payment Options</label><br>
-                        <select id="payid" name="paytype" v-model="form.paytype" >
+                        <select id="payid" name="paytype" v-model="orders.paytype" >
                             
                             <option >Debit Card</option>
                             <option >Credit Card</option>
@@ -118,10 +114,10 @@
                     </p>
                         <br>
                    <label for="gendertype">Gender</label>
-                        <p><input type="radio" id="male" name="gender" value="male" v-model="form.gender"><label for ="male">Male</label></p>
-                        <p><input type ="radio" id="female" name="gender" value="female" v-model.onclick="form.gender"><label for="female">Female</label></p>                        
-                        <p><input type ="radio" id="Non-binary" name="gender" value="Non-binary" v-model="form.gender"><label for="Non-binary">Non-binary</label></p>                        
-                        <p><input v-model="form.gender" type ="radio" id="Undisclosed" name="gender" value="Undisclosed" checked="checked" ><label for="Undisclosed">Undisclosed</label></p>                        
+                        <p><input type="radio" id="male" name="gender" value="male" v-model="orders.gender"><label for ="male">Male</label></p>
+                        <p><input type ="radio" id="female" name="gender" value="female" v-model.onclick="orders.gender"><label for="female">Female</label></p>                        
+                        <p><input type ="radio" id="Non-binary" name="gender" value="Non-binary" v-model="orders.gender"><label for="Non-binary">Non-binary</label></p>                        
+                        <p><input v-model="orders.gender" type ="radio" id="Undisclosed" name="gender" value="Undisclosed" checked="checked" ><label for="Undisclosed">Undisclosed</label></p>                        
                           
                           
                  
@@ -130,18 +126,38 @@
 
                 </form>
             </section>
-                <button type="submit" v-on:click='process'><img src="../img/delivery.jpg" alt="click to submit" width="30px" height="18px">Place my order!</button>
-            <section >
+                <button type="submit" id='submit_buttton' v-on:click='addOrder'><img src="../img/delivery_icon.png" alt="click to submit" >Place Your Order!</button>
+            <section id='order_section'>
 
-                <!-- <h1>{{form}}</h1> -->
-                
-                <template v-for="value,key in displayVals" >
-                 <div class="order_detail"><h1 style='text-transform:uppercase'> {{key}}-{{value}}</h1></div>
+                <h1>Order Confirmation</h1>
+                    <h2>Customer Detail</h2>
+                <template v-for="value,key in displayVals"  >
                     
-                     <!-- <input v-for="val, key in displayVals" v-model="displayVals[key]"> -->
-                    </div>
+                    <template v-if="key!='burgername'">
+                        <div class="order_detail"><h3 > {{key}}-{{value}}</h3></div>
+                            </div>
+                    
+                    </template>
+                    
                 </template>
-            </section>    
+                     <h2>Order Summery</h2>
+                <ul  >
+                    <template v-for="value,key in displayVals.burgername" >
+                        <li>{{value}}</li>
+
+                    </template>
+                   
+                       
+                        
+                        
+                     
+                  
+                            
+                    
+                    </ul>
+               
+                
+                </section>    
            
         </main>
         <footer>

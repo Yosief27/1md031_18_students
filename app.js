@@ -49,19 +49,16 @@ Data.prototype.addOrder = function (order) {
   this.orders[order.orderId] = order;
 };
 Data.prototype.getAllOrders = function () {
+  
   return this.orders;
 };
-//adding and returning messages
-
-Data.prototype.addMessage = function (message) {
-  
-  this.messages.push(message);
+Data.prototype.addMessage = function (message) {  
+  this.messages.push(message)
 };
 Data.prototype.getAllMessages = function () {
+  
       return this.messages;
     };
-
-
 
 var data = new Data();
 

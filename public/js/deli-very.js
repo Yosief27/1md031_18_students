@@ -8,15 +8,20 @@ var vm = new Vue({
   el: '#dots',
   data: {
     orders: {},
+    messages:[],
+    newMessage:''
   },
   created: function () {
-    socket.on('initialize', function (data) {
-      this.orders = data.orders;
-    }.bind(this));
+      socket.on('initialize', function (data) {
+        this.orders = data.orders;
+      }.bind(this));
 
-    socket.on('currentQueue', function (data) {
-      this.orders = data.orders;
-    }.bind(this));
+      socket.on('currentQueue', function (data) {
+        this.orders = data.orders;
+      }.bind(this));
+
+      socket.on('chat-AllPervious',function(data){
+        this.messages=data.messages;  }.bind(this));
   },
   methods: {
     getNext: function () {
@@ -26,6 +31,8 @@ var vm = new Vue({
       return lastOrder + 1;
     },
     addOrder: function (event) {
+      console.log(this.getNext())
+      
       var offset = {x: event.currentTarget.getBoundingClientRect().left,
                     y: event.currentTarget.getBoundingClientRect().top};
       socket.emit("addOrder", { orderId: this.getNext(),
@@ -33,6 +40,9 @@ var vm = new Vue({
                                            y: event.clientY - 10 - offset.y },
                                 orderItems: ["Beans", "Curry"]
                               });
-    }
+    },
+    addMessage:function(){
+      socket.on('chat-addMessage',{message:this.newMessage});
+  }
   }
 });

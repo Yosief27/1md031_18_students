@@ -1,85 +1,88 @@
 
 
-
-
-// var vm = new Vue({
-//     el: '.main-ID',
-//     data: {
-//        food:food,
-//        form:{
-//         name:'',
-//         email:'',
-//         husnum:'',
-//         gender:'Undisclosed',
-//         paytype:'Credit Card',
-//         husnum:'',
-//         streetname:'',
-//         burgername:''
-        
-//         }
-      
-    
-//     },
-//     methods:{
-//          process:function(){
-//              console.log({name:this.form['name'],email:this.form['email']})
-        
-//             alert('processing');
-            
-//         }
-//     }
-    
-//   })
+'use strict';
+var socket = io();
 
   var vm = new Vue({
     el: '.main-ID',
     data() {
         return{
        food:food,
-       form:{
+       orders:{
         name:'',
         email:'',
-        // husnum:'',
-        gender:'Undisclosed',
+        
+        gender:'female',
         paytype:'Credit Card',
+        details:'' ,
         
-        // streetname:'',
-        burgername:[]
+        burgername:[],
         
-        },
-        displayVals:{}
+       },
+        
+       
+    
+        
+        displayVals:{},
+        ordersmore:[]
+        
     };
     
+    // },
+    // created: function () {
+    //   socket.on('initialize', function (data) {
+    //     this.orders = data.orders;
+    //   }.bind(this));
+  
+    //   socket.on('currentQueue', function (data) {
+    //     this.orders = data.orders;
+    //   }.bind(this));
     },
+  
     methods:{
-         process:function(){
-            this.displayVals={...this.form};
+         addOrder:function(){
+           
+       
+         
+           this.displayVals={...this.orders};
+           this.ordersmore.push(this.orders);
+           console.log(this.ordersmore);
+         
+            socket.emit("addOrder", { orderId: this.getNext(),
+                                      details:this.orders.details,
+                                       
+                                          
+                                          orderItems: [this.orders.name,this.orders.email,this.orders.burgername]
+                                        });
             
+           
+                                        document.getElementById('order_section').style.display = 'inline';  
         },
-    },
-    watch:{
-        displayVals:{
-            deep:true,
-            handler(){
-                this.form={...this.displayVals}
-            }
+        
+        getNext: function () {
+          var lastOrder = Object.keys(this.ordersmore).reduce(function (last, next) {
+            return Math.max(last, next);
+          }, 0);
+          console.log(lastOrder);
+          return lastOrder + 1;
+        },
+       
+        
+        displayOrder: function (event) {
+          
+          var offset = {x: event.currentTarget.getBoundingClientRect().left,
+                        y: event.currentTarget.getBoundingClientRect().top};
+          this.orders.details={ x: event.clientX - 15 - offset.x,
+            y: event.clientY - 15 - offset.y }; 
+          
+            
+            
+          
         }
-    }
+    },
+
+    
     
   })
 
-  var vm = new Vue({
-    el: '#dots',
-    data: {
-      orders: {},
-    },
-    /* Please note that there should actually be some more code here. That code is included and explained in the next example */
-    methods: {
-      addOrder: function (event) {
-        socket.emit("addOrder", { orderId: this.getNext(),
-                                  details: { x: event.clientX-10 - event.currentTarget.getBoundingClientRect().left,
-                                             y: event.clientX-10 - event.currentTarget.getBoundingClientRect().top, },
-                                  orderItems: ["Beans", "Curry"]
-                                });
-      }
-    }
+  
